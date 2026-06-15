@@ -17,5 +17,8 @@
     "@types/redis": "^4.0.11",
     "express": "^4.19.2",
     "vitest": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
   }
 }
