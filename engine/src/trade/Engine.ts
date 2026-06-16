@@ -32,7 +32,12 @@ export class Engine {
             this.orderbooks = snapshotSnapshot.orderbooks.map((o: any) => new Orderbook(o.baseAsset, o.bids, o.asks, o.lastTradeId, o.currentPrice));
             this.balances = new Map(snapshotSnapshot.balances);
         } else {
-            this.orderbooks = [new Orderbook(`TATA`, [], [], 0, 0)];
+            this.orderbooks = [
+                new Orderbook(`TATA`, [], [], 0, 0),
+                new Orderbook(`BTC`, [], [], 0, 0),
+                new Orderbook(`ETH`, [], [], 0, 0),
+                new Orderbook(`SOL`, [], [], 0, 0),
+            ];
             this.setBaseBalances();
         }
         setInterval(() => {
@@ -394,38 +399,17 @@ export class Engine {
     }
 
     setBaseBalances() {
-        this.balances.set("1", {
-            [BASE_CURRENCY]: {
-                available: 10000000,
-                locked: 0
-            },
-            "TATA": {
-                available: 10000000,
-                locked: 0
-            }
-        });
+        const assets: Record<string, { available: number; locked: number }> = {
+            [BASE_CURRENCY]: { available: 100000000, locked: 0 },
+            "TATA": { available: 100000000, locked: 0 },
+            "BTC": { available: 1000, locked: 0 },
+            "ETH": { available: 10000, locked: 0 },
+            "SOL": { available: 100000, locked: 0 },
+        };
 
-        this.balances.set("2", {
-            [BASE_CURRENCY]: {
-                available: 10000000,
-                locked: 0
-            },
-            "TATA": {
-                available: 10000000,
-                locked: 0
-            }
-        });
-
-        this.balances.set("5", {
-            [BASE_CURRENCY]: {
-                available: 10000000,
-                locked: 0
-            },
-            "TATA": {
-                available: 10000000,
-                locked: 0
-            }
-        });
+        this.balances.set("1", { ...assets });
+        this.balances.set("2", { ...assets });
+        this.balances.set("5", { ...assets });
     }
 
 }

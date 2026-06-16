@@ -14,18 +14,26 @@ pgClient.connect();
 export const klineRouter = Router();
 
 klineRouter.get("/", async (req, res) => {
-    const { market, interval, startTime, endTime } = req.query;
+    const { symbol, market, interval, startTime, endTime } = req.query;
+    const marketSymbol = (symbol || market) as string;
+    const currencyCode = marketSymbol ? marketSymbol.split("_")[0] : null;
 
     let query;
     switch (interval) {
         case '1m':
-            query = `SELECT * FROM klines_1m WHERE bucket >= $1 AND bucket <= $2`;
+            query = currencyCode
+                ? `SELECT * FROM klines_1m WHERE bucket >= $1 AND bucket <= $2 AND currency_code = $3`
+                : `SELECT * FROM klines_1m WHERE bucket >= $1 AND bucket <= $2`;
             break;
         case '1h':
-            query = `SELECT * FROM klines_1h WHERE bucket >= $1 AND bucket <= $2`;
+            query = currencyCode
+                ? `SELECT * FROM klines_1h WHERE bucket >= $1 AND bucket <= $2 AND currency_code = $3`
+                : `SELECT * FROM klines_1h WHERE bucket >= $1 AND bucket <= $2`;
             break;
         case '1w':
-            query = `SELECT * FROM klines_1w WHERE bucket >= $1 AND bucket <= $2`;
+            query = currencyCode
+                ? `SELECT * FROM klines_1w WHERE bucket >= $1 AND bucket <= $2 AND currency_code = $3`
+                : `SELECT * FROM klines_1w WHERE bucket >= $1 AND bucket <= $2`;
             break;
         default:
             return res.status(400).send('Invalid interval');
@@ -33,7 +41,9 @@ klineRouter.get("/", async (req, res) => {
 
     try {
         //@ts-ignore
-        const result = await pgClient.query(query, [new Date(startTime * 1000 as string), new Date(endTime * 1000 as string)]);
+        const params: any[] = [new Date(startTime * 1000 as string), new Date(endTime * 1000 as string)];
+        if (currencyCode) params.push(currencyCode);
+        const result = await pgClient.query(query, params);
         res.json(result.rows.map(x => ({
             close: x.close,
             end: x.bucket,
