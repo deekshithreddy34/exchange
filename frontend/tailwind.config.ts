@@ -34,7 +34,10 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       textColor: {
-        greenPrimaryButtonText: "rgb(20,21,27)"
+        greenPrimaryButtonText: "rgb(20,21,27)",
+        baseTextHighEmphasis: "rgb(244,244,246)",
+        baseTextMedEmphasis: "rgb(180,183,191)",
+        greenText: "rgb(0,194,120)",
       }
     },
   },
